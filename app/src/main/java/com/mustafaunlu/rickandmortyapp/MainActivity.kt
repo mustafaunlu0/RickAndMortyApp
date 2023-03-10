@@ -9,7 +9,9 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.mustafaunlu.rickandmortyapp.navigation.Navigation
 import com.mustafaunlu.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,6 +20,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             RickAndMortyAppTheme {
                 // A surface container using the 'background' color from the theme
+                androidx.compose.material.Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color(0xFF262C3A)
+                ) {
+                    Navigation()
+                }
 
             }
         }
