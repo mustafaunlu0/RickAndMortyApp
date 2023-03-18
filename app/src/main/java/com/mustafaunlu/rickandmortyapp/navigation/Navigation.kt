@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mustafaunlu.rickandmortyapp.constants.Constants
+import com.mustafaunlu.rickandmortyapp.screen.MainScreen
 import com.mustafaunlu.rickandmortyapp.screen.SplashScreen
 
 
@@ -19,16 +20,15 @@ fun Navigation() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Constants.SPLASH_SCREEN){
+    NavHost(navController = navController, startDestination = Constants.MAIN_SCREEN){
 
         composable(Constants.SPLASH_SCREEN){
             SplashScreen(navController = navController)
         }
 
         composable(Constants.MAIN_SCREEN){
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                Text(text = "Main  Screen", color = Color.Black)
-            }
+
+            MainScreen()
         }
 
         composable(Constants.DETAIL_SCREEN){
