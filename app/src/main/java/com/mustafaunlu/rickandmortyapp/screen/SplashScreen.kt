@@ -23,10 +23,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.constants.Constants
+import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 
+@Destination(start = true)
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController,
+    navigator : DestinationsNavigator
+                 ) {
 
     //first Entry
     val isFirst = remember{
@@ -50,8 +56,8 @@ fun SplashScreen(navController: NavController) {
             )
         )
 
-        delay(3000L)
-        navController.navigate(Constants.MAIN_SCREEN)
+        delay(500L)
+        navigator.navigate(MainScreenDestination())
 
     }
 

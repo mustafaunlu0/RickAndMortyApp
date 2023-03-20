@@ -1,13 +1,13 @@
 package com.mustafaunlu.rickandmortyapp.screen
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,18 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.End
-import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Alignment.Companion.Top
-import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -43,13 +38,17 @@ import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.model.Character
+import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-
+@Destination
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-
+    navigator : DestinationsNavigator
     ) {
 
 
@@ -71,7 +70,7 @@ fun MainScreen(
                     }
 
                 },
-                backgroundColor = TopBar,
+                backgroundColor = Color(0xFFF5D95B),
                 elevation = 2.dp,
             )
         },
@@ -80,7 +79,7 @@ fun MainScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DeepBlue)
+                .background(MainColor)
 
         ) {
             item {
@@ -120,11 +119,10 @@ fun MainScreen(
                         Character(
                             profileImage = painterResource(id = R.drawable.morty),
                             name = "Morty",
-                            gender = "Male"
-                        ),
+                            gender = "Male",
 
-
-                        )
+                        )),
+                        navigator = navigator
                 )
 
             }
@@ -138,16 +136,17 @@ fun MainScreen(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 fun CharacterList(
     modifier: Modifier = Modifier,
-    characters: List<Character>
+    characters: List<Character>,
+    navigator : DestinationsNavigator
 ) {
 
 
     LazyVerticalGrid(
-        cells = GridCells.Fixed(1),
+        columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(
             start = 7.5.dp,
             end = 7.5.dp
@@ -155,7 +154,7 @@ fun CharacterList(
         modifier = modifier.height(500.dp)
     ) {
         items(characters.size) {
-            CharacterItem(character = characters[it])
+            CharacterItem(character = characters[it],navigator)
 
 
         }
@@ -167,7 +166,8 @@ fun CharacterList(
 
 @Composable
 fun CharacterItem(
-    character: Character
+    character: Character,
+    navigator: DestinationsNavigator
 ) {
 
 
@@ -177,7 +177,10 @@ fun CharacterItem(
             .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(specifyColor(character.gender)),
+            .background(specifyColor(character.gender))
+            .clickable {
+                navigator.navigate(DetailScreenDestination(name = character.name))
+            },
 
         )
     {
@@ -290,7 +293,7 @@ fun LocationList(
                 modifier = Modifier.padding(10.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (selectedLocIndex == it) ButtonBlue else backColor,
+                    backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
                     contentColor = buttonContentColor
                 ),
                 border = BorderStroke(
@@ -367,7 +370,7 @@ fun SearchBar(state: String, modifier: Modifier = Modifier) {
             cursorColor = Color.White,
             leadingIconColor = Color.White,
             trailingIconColor = Color.White,
-            backgroundColor = ButtonBlue,
+            backgroundColor = SecondColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
@@ -415,7 +418,7 @@ fun DescriptionPart() {
                 text = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
-                            color = ButtonBlue,
+                            color = SecondColor,
                             fontSize = 40.sp,
                         )
                     ) {
@@ -424,7 +427,7 @@ fun DescriptionPart() {
                     append("aceraya ")
                     withStyle(
                         style = SpanStyle(
-                            color = ButtonBlue,
+                            color = SecondColor,
                             fontSize = 40.sp
                         )
                     ) {

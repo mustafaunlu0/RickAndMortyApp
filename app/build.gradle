@@ -1,9 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
 }
 
 android {
+    applicationVariants.all { variant ->
+        variant.addJavaSourceFoldersToModel(
+                new File(buildDir, "generated/ksp/${variant.name}/kotlin")
+        )
+    }
     compileSdk 32
 
     defaultConfig {
@@ -67,6 +73,10 @@ dependencies {
     //Lottie Animation
     def lottieVersion = "6.0.0"
     implementation "com.airbnb.android:lottie-compose:$lottieVersion"
+
+    //Compose Destinations
+    implementation("io.github.raamcosta.compose-destinations:core:1.6.36-beta")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.6.36-beta")
 
 
 }
