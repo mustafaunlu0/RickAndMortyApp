@@ -56,7 +56,7 @@ fun SplashScreen(navController: NavController,
             )
         )
 
-        delay(500L)
+        delay(100L)
         navigator.navigate(MainScreenDestination())
 
     }

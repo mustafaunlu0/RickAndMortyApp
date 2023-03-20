@@ -18,7 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Alignment.Companion.Top
+import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,8 +51,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    navigator : DestinationsNavigator
-    ) {
+    navigator: DestinationsNavigator
+) {
 
 
     Scaffold(
@@ -74,7 +77,7 @@ fun MainScreen(
                 elevation = 2.dp,
             )
         },
-        ) {
+    ) {
 
         LazyColumn(
             modifier = Modifier
@@ -121,8 +124,9 @@ fun MainScreen(
                             name = "Morty",
                             gender = "Male",
 
-                        )),
-                        navigator = navigator
+                            )
+                    ),
+                    navigator = navigator
                 )
 
             }
@@ -136,12 +140,11 @@ fun MainScreen(
 }
 
 
-
 @Composable
 fun CharacterList(
     modifier: Modifier = Modifier,
     characters: List<Character>,
-    navigator : DestinationsNavigator
+    navigator: DestinationsNavigator
 ) {
 
 
@@ -154,7 +157,7 @@ fun CharacterList(
         modifier = modifier.height(500.dp)
     ) {
         items(characters.size) {
-            CharacterItem(character = characters[it],navigator)
+            CharacterItem(character = characters[it], navigator)
 
 
         }
@@ -187,14 +190,14 @@ fun CharacterItem(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+
         ) {
             when (character.gender) {
                 "Female" -> {
-                    CharacterImage(character = character)
+                    CharacterImage(character = character, modifier = Modifier.fillMaxHeight().weight(1f))
                     CharacterName(
                         character = character,
-                        modifier = Modifier.align(CenterVertically)
+                        modifier = Modifier.align(CenterVertically).weight(1f)
                     )
                     GenderIcon(character.gender, modifier = Modifier.align(Top))
                 }
@@ -202,16 +205,16 @@ fun CharacterItem(
                     GenderIcon(character.gender, modifier = Modifier.align(Top))
                     CharacterName(
                         character = character,
-                        modifier = Modifier.align(CenterVertically)
+                        modifier = Modifier.align(CenterVertically).weight(1f)
                     )
-                    CharacterImage(character = character)
+                    CharacterImage(character = character, modifier = Modifier.weight(1f))
                 }
             }
         }
     }
 }
 
-fun specifyColor(gender: String) : Color {
+fun specifyColor(gender: String): Color {
     return when (gender) {
         "Female" -> FemaleColor
         "Male" -> MaleColor
@@ -221,14 +224,13 @@ fun specifyColor(gender: String) : Color {
 
 @Composable
 fun CharacterImage(
-    character: Character
+    character: Character,
+    modifier: Modifier = Modifier
 ) {
     Image(
         painter = character.profileImage,
         contentDescription = character.name,
-        modifier = Modifier
-            .height(250.dp)
-            .width(120.dp),
+        modifier = modifier,
         contentScale = ContentScale.FillBounds
     )
 }
@@ -243,6 +245,7 @@ fun CharacterName(
         color = Color.White,
         modifier = modifier
             .padding(horizontal = 10.dp),
+        textAlign = TextAlign.Center,
         fontSize = 26.sp,
         fontFamily = FontFamily(Font(R.font.firefans))
     )
@@ -261,7 +264,7 @@ fun GenderIcon(
         },
         contentDescription = "gender",
         tint = Color.White,
-        modifier = Modifier.padding(10.dp)
+        modifier = modifier.padding(10.dp)
     )
 }
 
@@ -281,7 +284,7 @@ fun LocationList(
     }
 
     LazyRow(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.padding(start = 10.dp, end = 10.dp).fillMaxWidth()
     ) {
         items(locations.size) {
 
@@ -302,9 +305,12 @@ fun LocationList(
                 )
 
             ) {
-                Text(text = locations[it],
-                    fontFamily = FontFamily(Font(R.font.firefans)
-                    ))
+                Text(
+                    text = locations[it],
+                    fontFamily = FontFamily(
+                        Font(R.font.firefans)
+                    )
+                )
             }
         }
     }
@@ -392,7 +398,7 @@ fun MortyAnimation(
     LottieAnimation(
         composition = composition,
         progress = { progress },
-        modifier = modifier.size(100.dp)
+        modifier = modifier.height(100.dp)
     )
 
 }
@@ -405,12 +411,11 @@ fun DescriptionPart() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
     ) {
 
         Column(
             modifier = Modifier
-                .padding(20.dp),
+                .padding(30.dp).weight(3f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
@@ -447,14 +452,14 @@ fun DescriptionPart() {
                 color = DarkerButtonBlue,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp,
-                fontFamily = FontFamily(Font(R.font.firefans)
-            ))
+                fontFamily = FontFamily(
+                    Font(R.font.firefans)
+                )
+            )
 
         }
 
-
-
-        MortyAnimation()
+        MortyAnimation(modifier = Modifier.weight(1f))
     }
 
 
