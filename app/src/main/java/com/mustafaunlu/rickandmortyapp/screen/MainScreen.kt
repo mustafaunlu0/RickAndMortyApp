@@ -71,12 +71,10 @@ fun MainScreen(
                     }
 
                 },
-                backgroundColor = Color(0xFFAAC0D3),
+                backgroundColor = TopBar,
                 elevation = 2.dp,
             )
         },
-
-
         ) {
 
         LazyColumn(
