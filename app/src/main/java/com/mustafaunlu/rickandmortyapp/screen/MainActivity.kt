@@ -1,16 +1,21 @@
-package com.mustafaunlu.rickandmortyapp
+package com.mustafaunlu.rickandmortyapp.screen
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.mustafaunlu.rickandmortyapp.screen.NavGraphs
 import com.mustafaunlu.rickandmortyapp.ui.theme.RickAndMortyAppTheme
+import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.DestinationsNavHost
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

@@ -7,8 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mustafaunlu.rickandmortyapp.R
-import com.mustafaunlu.rickandmortyapp.constants.Constants
 import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

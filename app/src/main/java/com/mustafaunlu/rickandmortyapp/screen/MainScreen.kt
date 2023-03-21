@@ -16,11 +16,10 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Alignment.Companion.Top
-import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -38,22 +37,58 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.*
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.model.Character
+import com.mustafaunlu.rickandmortyapp.model.character.Person
+import com.mustafaunlu.rickandmortyapp.model.character.PersonItem
+import com.mustafaunlu.rickandmortyapp.model.locations.Result
 import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
+import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState",
+    "MutableCollectionMutableState"
+)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    homeViewModel: HomeViewModel = hiltViewModel()
+
+
 ) {
 
+    var locations: MutableList<Result> by mutableStateOf(mutableListOf())
+    var persons: MutableList<Person> by mutableStateOf(mutableListOf())
+
+    var ids : MutableList<String> by mutableStateOf(mutableListOf())
+
+
+
+    homeViewModel.loadLocations()
+
+    val data = homeViewModel.getLocationData().observeAsState()
+
+    if(data.value != null){
+        locations= data.value!!.results as MutableList<Result>
+        locations.forEach{
+            it.residents.forEach { url ->
+                ids.add(findId(url))
+            }
+        }
+
+    }
+    homeViewModel.loadPersons(convertToString(ids))
+    //İdleri temiz bir şekilde aldık sıra aşağıda diğer verileri çekmemeye uğraşıyoruz
+    val charData=homeViewModel.getPerson().observeAsState()
+    if(charData.value != null){
+        //personların verisi çekilecek burada kaldık
+    }
 
     Scaffold(
         topBar = {
@@ -68,22 +103,18 @@ fun MainScreen(
                         Image(
                             painter = painterResource(id = R.drawable.ram4),
                             contentDescription = null,
-
                             )
                     }
-
                 },
                 backgroundColor = Color(0xFFF5D95B),
                 elevation = 2.dp,
             )
         },
     ) {
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MainColor)
-
         ) {
             item {
                 DescriptionPart()
@@ -91,7 +122,8 @@ fun MainScreen(
                 SearchBar(state = "deneme", modifier.padding(horizontal = 20.dp, vertical = 15.dp))
                 //indexi almak için remember değişkeni göndericez
                 LocationList(
-                    locations = listOf(
+                    locations = locations
+                    /*listOf(
                         "İstanbul",
                         "Ankara",
                         "İzmir",
@@ -101,6 +133,7 @@ fun MainScreen(
                         "Trabzon",
                         "Mersin"
                     )
+                    */
                 )
                 CharacterList(
                     characters = listOf(
@@ -139,12 +172,19 @@ fun MainScreen(
 
 }
 
-
+fun findId(url : String) : String{
+   return  url.substring((url.indexOf("character")+10),url.length)
+}
+fun convertToString(ids : MutableList<String>): String {
+    val string = ids.joinToString()
+    return string.replace(" ","")
+}
 @Composable
 fun CharacterList(
     modifier: Modifier = Modifier,
     characters: List<Character>,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
 
 
@@ -194,10 +234,14 @@ fun CharacterItem(
         ) {
             when (character.gender) {
                 "Female" -> {
-                    CharacterImage(character = character, modifier = Modifier.fillMaxHeight().weight(1f))
+                    CharacterImage(character = character, modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f))
                     CharacterName(
                         character = character,
-                        modifier = Modifier.align(CenterVertically).weight(1f)
+                        modifier = Modifier
+                            .align(CenterVertically)
+                            .weight(1f)
                     )
                     GenderIcon(character.gender, modifier = Modifier.align(Top))
                 }
@@ -205,7 +249,9 @@ fun CharacterItem(
                     GenderIcon(character.gender, modifier = Modifier.align(Top))
                     CharacterName(
                         character = character,
-                        modifier = Modifier.align(CenterVertically).weight(1f)
+                        modifier = Modifier
+                            .align(CenterVertically)
+                            .weight(1f)
                     )
                     CharacterImage(character = character, modifier = Modifier.weight(1f))
                 }
@@ -271,9 +317,9 @@ fun GenderIcon(
 @Composable
 fun LocationList(
     modifier: Modifier = Modifier,
-    locations: List<String>,
+    locations: List<Result>,
     buttonBackgroundColor: Color = DarkerButtonBlue,
-    buttonContentColor: Color = TextWhite
+    buttonContentColor: Color = TextWhite,
 ) {
 
     var backColor by remember {
@@ -284,13 +330,16 @@ fun LocationList(
     }
 
     LazyRow(
-        modifier = modifier.padding(start = 10.dp, end = 10.dp).fillMaxWidth()
+        modifier = modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .fillMaxWidth()
     ) {
         items(locations.size) {
 
 
             Button(
                 onClick = {
+                println(locations[it].name)
                     selectedLocIndex = it
                 },
                 modifier = Modifier.padding(10.dp),
@@ -306,7 +355,7 @@ fun LocationList(
 
             ) {
                 Text(
-                    text = locations[it],
+                    text = locations[it].name,
                     fontFamily = FontFamily(
                         Font(R.font.firefans)
                     )
@@ -415,7 +464,8 @@ fun DescriptionPart() {
 
         Column(
             modifier = Modifier
-                .padding(30.dp).weight(3f),
+                .padding(30.dp)
+                .weight(3f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
