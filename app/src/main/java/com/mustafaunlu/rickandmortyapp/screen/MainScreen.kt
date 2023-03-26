@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.*
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.model.Character
 import com.mustafaunlu.rickandmortyapp.model.character.Person
@@ -50,13 +52,12 @@ import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
-@Destination
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState",
-    "MutableCollectionMutableState"
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter",
+    "MutableCollectionMutableState", "UnrememberedMutableState"
 )
 @Composable
+@Destination
 fun MainScreen(
-    modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel = hiltViewModel()
 
@@ -64,31 +65,34 @@ fun MainScreen(
 ) {
 
     var locations: MutableList<Result> by mutableStateOf(mutableListOf())
-    var persons: MutableList<Person> by mutableStateOf(mutableListOf())
+    val ids : MutableList<String> by mutableStateOf(mutableListOf())
 
-    var ids : MutableList<String> by mutableStateOf(mutableListOf())
-
-
-
-    homeViewModel.loadLocations()
-
+    val persons  by homeViewModel.getPersonData().observeAsState()
     val data = homeViewModel.getLocationData().observeAsState()
+
+    var id by remember{
+        mutableStateOf("")
+    }
+
+
+    LaunchedEffect(Unit){
+        homeViewModel.loadLocations()
+
+    }
 
     if(data.value != null){
         locations= data.value!!.results as MutableList<Result>
-        locations.forEach{
-            it.residents.forEach { url ->
-                ids.add(findId(url))
-            }
+        homeViewModel.uploadData(locations,ids,0)
+        LaunchedEffect(Unit){
+            homeViewModel.fetchPersons(homeViewModel.convertToString(ids))
+
         }
+    }
+    LaunchedEffect(id){
+        homeViewModel.fetchPersons(id)
 
     }
-    homeViewModel.loadPersons(convertToString(ids))
-    //İdleri temiz bir şekilde aldık sıra aşağıda diğer verileri çekmemeye uğraşıyoruz
-    val charData=homeViewModel.getPerson().observeAsState()
-    if(charData.value != null){
-        //personların verisi çekilecek burada kaldık
-    }
+
 
     Scaffold(
         topBar = {
@@ -103,7 +107,7 @@ fun MainScreen(
                         Image(
                             painter = painterResource(id = R.drawable.ram4),
                             contentDescription = null,
-                            )
+                        )
                     }
                 },
                 backgroundColor = Color(0xFFF5D95B),
@@ -118,48 +122,16 @@ fun MainScreen(
         ) {
             item {
                 DescriptionPart()
-                //philipp lackner videosu
-                SearchBar(state = "deneme", modifier.padding(horizontal = 20.dp, vertical = 15.dp))
-                //indexi almak için remember değişkeni göndericez
                 LocationList(
-                    locations = locations
-                    /*listOf(
-                        "İstanbul",
-                        "Ankara",
-                        "İzmir",
-                        "Bursa",
-                        "Diyarbakır",
-                        "Mardin",
-                        "Trabzon",
-                        "Mersin"
-                    )
-                    */
-                )
-                CharacterList(
-                    characters = listOf(
-                        Character(
-                            profileImage = painterResource(id = R.drawable.rick),
-                            name = "Rick",
-                            gender = "Male"
-                        ),
-                        Character(
-                            profileImage = painterResource(id = R.drawable.diane),
-                            name = "Diane",
-                            gender = "Female"
-                        ),
-                        Character(
-                            profileImage = painterResource(id = R.drawable.unkown),
-                            name = "Doctor Bob",
-                            gender = "Unknown"
-                        ),
-                        Character(
-                            profileImage = painterResource(id = R.drawable.morty),
-                            name = "Morty",
-                            gender = "Male",
+                    locations = locations,
+                    ids = ids as ArrayList<String>,
+                    ){
+                    id=it
 
-                            )
-                    ),
-                    navigator = navigator
+                }
+                CharacterList(
+                    persons = persons,
+                    navigator = navigator,
                 )
 
             }
@@ -169,22 +141,76 @@ fun MainScreen(
 
     }
 
+}
+@SuppressLint("MutableCollectionMutableState")
+@Composable
+fun LocationList(
+    modifier: Modifier = Modifier,
+    locations: List<Result>,
+    ids: ArrayList<String>,
+    buttonBackgroundColor: Color = DarkerButtonBlue,
+    buttonContentColor: Color = TextWhite,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    idChanged : (String) -> Unit,
+
+) {
+
+    var backColor by remember {
+        mutableStateOf(buttonBackgroundColor)
+    }
+    var selectedLocIndex by remember {
+        mutableStateOf(0)
+    }
+
+
+    LazyRow(
+        modifier = modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .fillMaxWidth()
+    ) {
+        items(locations.size) {
+
+
+            Button(
+                onClick = {
+                    selectedLocIndex = it
+                    ids.clear()
+                    homeViewModel.uploadData(locations as MutableList<Result>,ids,it)
+                    idChanged(homeViewModel.convertToString(ids))
+
+
+                },
+                modifier = Modifier.padding(10.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
+                    contentColor = buttonContentColor
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = TextWhite
+                )
+
+            ) {
+                Text(
+                    text = locations[it].name,
+                    fontFamily = FontFamily(
+                        Font(R.font.firefans)
+                    )
+                )
+            }
+        }
+    }
+
 
 }
 
-fun findId(url : String) : String{
-   return  url.substring((url.indexOf("character")+10),url.length)
-}
-fun convertToString(ids : MutableList<String>): String {
-    val string = ids.joinToString()
-    return string.replace(" ","")
-}
+
 @Composable
 fun CharacterList(
     modifier: Modifier = Modifier,
-    characters: List<Character>,
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    persons :ArrayList<PersonItem>?
 ) {
 
 
@@ -196,11 +222,13 @@ fun CharacterList(
         ),
         modifier = modifier.height(500.dp)
     ) {
-        items(characters.size) {
-            CharacterItem(character = characters[it], navigator)
+        if(persons != null){
+            items(persons.size) {
+                CharacterItem( navigator,persons[it])
 
-
+            }
         }
+
     }
 
 
@@ -209,9 +237,14 @@ fun CharacterList(
 
 @Composable
 fun CharacterItem(
-    character: Character,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    person: PersonItem,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    var episode by remember{
+        mutableStateOf("")
+    }
 
 
     Box(
@@ -220,9 +253,33 @@ fun CharacterItem(
             .fillMaxWidth()
             .padding(horizontal = 15.dp, vertical = 10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(specifyColor(character.gender))
+            .background(specifyColor(person.gender))
             .clickable {
-                navigator.navigate(DetailScreenDestination(name = character.name))
+                person.episode.forEachIndexed { index, item ->
+                    episode += if (index == person.episode.size - 1) {
+                        homeViewModel.findEpisode(item)
+                    } else {
+                        homeViewModel.findEpisode(item) + ", "
+                    }
+
+
+                }
+
+                navigator.navigate(
+                    DetailScreenDestination(
+                        name = person.name,
+                        status = person.status,
+                        specy = person.species,
+                        gender = person.gender,
+                        origin = person.origin.name,
+                        location = person.location.name,
+                        episodes = episode,
+                        apiDate = person.created,
+                        imageUrl = person.image
+                    )
+                )
+
+
             },
 
         )
@@ -231,29 +288,29 @@ fun CharacterItem(
         Row(
             modifier = Modifier.fillMaxWidth(),
 
-        ) {
-            when (character.gender) {
+            ) {
+            when (person.gender) {
                 "Female" -> {
-                    CharacterImage(character = character, modifier = Modifier
+                    CharacterImage(character = person, modifier = Modifier
                         .fillMaxHeight()
                         .weight(1f))
                     CharacterName(
-                        character = character,
+                        character = person,
                         modifier = Modifier
                             .align(CenterVertically)
                             .weight(1f)
                     )
-                    GenderIcon(character.gender, modifier = Modifier.align(Top))
+                    GenderIcon(person.gender, modifier = Modifier.align(Top))
                 }
                 else -> {
-                    GenderIcon(character.gender, modifier = Modifier.align(Top))
+                    GenderIcon(person.gender, modifier = Modifier.align(Top))
                     CharacterName(
-                        character = character,
+                        character = person,
                         modifier = Modifier
                             .align(CenterVertically)
                             .weight(1f)
                     )
-                    CharacterImage(character = character, modifier = Modifier.weight(1f))
+                    CharacterImage(character = person, modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -268,22 +325,26 @@ fun specifyColor(gender: String): Color {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CharacterImage(
-    character: Character,
+    character: PersonItem,
     modifier: Modifier = Modifier
 ) {
-    Image(
-        painter = character.profileImage,
+
+    GlideImage(
+        model = character.image,
         contentDescription = character.name,
         modifier = modifier,
         contentScale = ContentScale.FillBounds
     )
+
+
 }
 
 @Composable
 fun CharacterName(
-    character: Character,
+    character: PersonItem,
     modifier: Modifier = Modifier
 ) {
     Text(
@@ -314,124 +375,6 @@ fun GenderIcon(
     )
 }
 
-@Composable
-fun LocationList(
-    modifier: Modifier = Modifier,
-    locations: List<Result>,
-    buttonBackgroundColor: Color = DarkerButtonBlue,
-    buttonContentColor: Color = TextWhite,
-) {
-
-    var backColor by remember {
-        mutableStateOf(buttonBackgroundColor)
-    }
-    var selectedLocIndex by remember {
-        mutableStateOf(0)
-    }
-
-    LazyRow(
-        modifier = modifier
-            .padding(start = 10.dp, end = 10.dp)
-            .fillMaxWidth()
-    ) {
-        items(locations.size) {
-
-
-            Button(
-                onClick = {
-                println(locations[it].name)
-                    selectedLocIndex = it
-                },
-                modifier = Modifier.padding(10.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
-                    contentColor = buttonContentColor
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = TextWhite
-                )
-
-            ) {
-                Text(
-                    text = locations[it].name,
-                    fontFamily = FontFamily(
-                        Font(R.font.firefans)
-                    )
-                )
-            }
-        }
-    }
-
-
-}
-
-
-// philipp lackner video
-@Composable
-fun SearchBar(state: String, modifier: Modifier = Modifier) {
-    var deneme by remember {
-        mutableStateOf(TextFieldValue("deneme"))
-    }
-    TextField(
-        value = state,
-        onValueChange = {
-            /*value ->
-        var deneme : String = value.text
-
-             */
-
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(30.dp)),
-        textStyle = TextStyle(
-            color = Color.White,
-            fontSize = 18.sp,
-            fontFamily = FontFamily(Font(R.font.firefans))
-        ),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "search",
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
-            )
-        },
-        trailingIcon = {
-            if (state != "") {
-                IconButton(onClick = {
-                    /*
-                    state.value = TextFieldValue("")
-
-                     */
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
-                    )
-                }
-            }
-        },
-        singleLine = true,
-        shape = RectangleShape,
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
-            cursorColor = Color.White,
-            leadingIconColor = Color.White,
-            trailingIconColor = Color.White,
-            backgroundColor = SecondColor,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        )
-    )
-}
 
 
 @Composable
@@ -464,7 +407,7 @@ fun DescriptionPart() {
 
         Column(
             modifier = Modifier
-                .padding(30.dp)
+                .padding(horizontal = 30.dp, vertical = 20.dp)
                 .weight(3f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start

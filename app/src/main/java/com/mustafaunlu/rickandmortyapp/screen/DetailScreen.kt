@@ -2,7 +2,6 @@ package com.mustafaunlu.rickandmortyapp.screen
 
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,22 +23,38 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.MainColor
 import com.mustafaunlu.rickandmortyapp.ui.theme.SecondColor
 import com.mustafaunlu.rickandmortyapp.ui.theme.TextWhite
 import com.mustafaunlu.rickandmortyapp.ui.theme.TopBar
+import com.mustafaunlu.rickandmortyapp.viewmodel.DetailViewModel
+import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-@Destination
 @Composable
+@Destination
 fun DetailScreen(
     modifier: Modifier = Modifier,
-    name: String = "Beth Smith",
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    name: String,
+    status: String,
+    specy: String,
+    gender: String,
+    origin: String,
+    location: String,
+    episodes: String,
+    apiDate: String,
+    imageUrl: String,
 ) {
 
     Scaffold(
@@ -90,23 +105,36 @@ fun DetailScreen(
         ) {
             item {
                 Spacer(modifier = modifier.height(20.dp))
-                CharImageSection()
+                CharImageSection(imageUrl = imageUrl)
                 Spacer(modifier = modifier.height(20.dp))
-                CharInfoSection()
-
+                CharInfoSection(
+                    status = status,
+                    specy = specy,
+                    gender = gender,
+                    origin = origin,
+                    location = location,
+                    episodes = episodes,
+                    apiDate = apiDate
+                )
             }
-
         }
-
-
     }
-
 }
 
 @Composable
 fun CharInfoSection(
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+    status: String,
+    specy: String,
+    gender: String,
+    origin: String,
+    location: String,
+    episodes: String,
+    apiDate: String,
+    detailViewModel: DetailViewModel = viewModel()
+    ) {
+
+
 
     Column(
         modifier = modifier
@@ -114,13 +142,13 @@ fun CharInfoSection(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        InfoSection(info = "Status", value = "Alive")
-        InfoSection(info = "Specy", value = "Human")
-        InfoSection(info = "Gender", value = "Female")
-        InfoSection(info = "Origin", value = "Earth (C-137)")
-        InfoSection(info = "Location", value = "Earth (C-137)")
-        InfoSection(info = "Episodes", value = "1, 2, 3, 4, 6, 22, 51")
-        InfoSection(info = "Created at (in API)", value = "5 May 2017, 09:46:44")
+        InfoSection(info = "Status", value = status)
+        InfoSection(info = "Specy", value = specy)
+        InfoSection(info = "Gender", value = gender)
+        InfoSection(info = "Origin", value = origin)
+        InfoSection(info = "Location", value = location)
+        InfoSection(info = "Episodes", value = episodes)
+        InfoSection(info = "Created at (in API)", value = detailViewModel.dateConvert(apiDate))
 
     }
 
@@ -164,10 +192,11 @@ fun InfoSection(
     )
 }
 
-//character yollanacak
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CharImageSection(
     modifier: Modifier = Modifier,
+    imageUrl: String
 ) {
 
     Row(
@@ -183,8 +212,8 @@ fun CharImageSection(
 
             ) {
 
-            Image(
-                painter = painterResource(id = R.drawable.diane),
+            GlideImage(
+                model = imageUrl,
                 contentDescription = "diane",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.FillBounds,

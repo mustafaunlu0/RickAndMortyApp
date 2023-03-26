@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFF262C3A)
                 ) {
+                   // DestinationsNavHost(navGraph = NavGraphs.root)
                     DestinationsNavHost(navGraph = NavGraphs.root)
                 }
 
