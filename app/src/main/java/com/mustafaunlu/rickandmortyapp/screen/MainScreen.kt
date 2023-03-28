@@ -189,7 +189,7 @@ fun LocationList(
                     Text(
                         text = locations[it].name,
                         fontFamily = FontFamily(
-                            Font(R.font.firefans)
+                            Font(R.font.avenir)
                         )
                     )
                 }
@@ -353,7 +353,7 @@ fun CharacterName(
             .padding(horizontal = 10.dp),
         textAlign = TextAlign.Center,
         fontSize = 22.sp,
-        fontFamily = FontFamily(Font(R.font.firefans))
+        fontFamily = FontFamily(Font(R.font.avenir))
     )
 }
 
@@ -444,7 +444,7 @@ fun DescriptionPart() {
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp,
                 fontFamily = FontFamily(
-                    Font(R.font.firefans)
+                    Font(R.font.avenir)
                 )
             )
 

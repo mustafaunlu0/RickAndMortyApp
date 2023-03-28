@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +31,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 @Destination(start = true)
-fun SplashScreen(navController: NavController,
+fun SplashScreen(
     navigator : DestinationsNavigator,
     homeViewModel: HomeViewModel= hiltViewModel()
                  ) {
@@ -85,6 +87,7 @@ fun SplashScreen(navController: NavController,
         Text(
             text =  if (isFirst.value) "Welcome!" else "Hello!" ,
             fontSize = 27.sp,
+            fontFamily = FontFamily(Font(R.font.avenir)),
             color = Color(0xFF12afc9),
             modifier = Modifier
                 .scale(scale.value)

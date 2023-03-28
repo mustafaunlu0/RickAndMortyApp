@@ -73,7 +73,8 @@ fun DetailScreen(
                         Text(
                             text = name,
                             color = SecondColor,
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily(Font(R.font.avenir))
                         )
                     }
 
@@ -174,7 +175,7 @@ fun InfoSection(
                 color = TextWhite,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily(Font(R.font.firefans)),
+                fontFamily = FontFamily(Font(R.font.avenir)),
                 modifier = Modifier
                     .padding(start = 30.dp)
                     .weight(1f)
@@ -184,6 +185,7 @@ fun InfoSection(
                 text = value,
                 color = SecondColor,
                 fontSize = 18.sp,
+                fontFamily = FontFamily(Font(R.font.avenir)),
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .weight(2f)
