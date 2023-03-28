@@ -2,6 +2,9 @@ package com.mustafaunlu.rickandmortyapp.screen
 
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.Animatable
+
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +15,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,22 +28,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
-import com.mustafaunlu.rickandmortyapp.ui.theme.MainColor
-import com.mustafaunlu.rickandmortyapp.ui.theme.SecondColor
-import com.mustafaunlu.rickandmortyapp.ui.theme.TextWhite
-import com.mustafaunlu.rickandmortyapp.ui.theme.TopBar
+import com.mustafaunlu.rickandmortyapp.ui.theme.*
 import com.mustafaunlu.rickandmortyapp.viewmodel.DetailViewModel
-import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -57,6 +57,13 @@ fun DetailScreen(
     imageUrl: String,
 ) {
 
+    val color = remember { Animatable(MainColor) }
+    LaunchedEffect(Unit) {
+        color.animateTo(DarkerButtonBlue, animationSpec = tween(1000))
+        color.animateTo(MainColor, animationSpec = tween(5000))
+    }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -70,7 +77,7 @@ fun DetailScreen(
                         Text(
                             text = name,
                             color = SecondColor,
-                            fontSize = 22.sp
+                            fontSize = 20.sp
                         )
                     }
 
@@ -100,7 +107,7 @@ fun DetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MainColor)
+                .background(color.value)
 
         ) {
             item {
@@ -169,7 +176,7 @@ fun InfoSection(
             Text(
                 text = "$info:",
                 color = TextWhite,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.firefans)),
                 modifier = Modifier
@@ -180,7 +187,7 @@ fun InfoSection(
             Text(
                 text = value,
                 color = SecondColor,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .weight(2f)

@@ -18,9 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
+import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -28,7 +30,8 @@ import kotlinx.coroutines.delay
 @Composable
 @Destination(start = true)
 fun SplashScreen(navController: NavController,
-    navigator : DestinationsNavigator
+    navigator : DestinationsNavigator,
+    homeViewModel: HomeViewModel= hiltViewModel()
                  ) {
 
     //first Entry
@@ -40,7 +43,9 @@ fun SplashScreen(navController: NavController,
     val scale = remember {
         Animatable(0f)
     }
-
+    homeViewModel.isFirstTime {
+        isFirst.value=it
+    }
 
     LaunchedEffect(key1 = true) {
         scale.animateTo(
@@ -55,6 +60,10 @@ fun SplashScreen(navController: NavController,
 
         delay(100L)
         navigator.navigate(MainScreenDestination())
+
+
+
+
 
     }
 

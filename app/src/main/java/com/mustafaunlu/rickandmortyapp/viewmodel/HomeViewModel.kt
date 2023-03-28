@@ -1,37 +1,48 @@
 package com.mustafaunlu.rickandmortyapp.viewmodel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mustafaunlu.rickandmortyapp.model.character.PersonItem
+import androidx.lifecycle.viewModelScope
+import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Location
 import com.mustafaunlu.rickandmortyapp.model.locations.Result
-import com.mustafaunlu.rickandmortyapp.repo.RetrofitRepository
+import com.mustafaunlu.rickandmortyapp.repo.CharacterRepository
+import com.mustafaunlu.rickandmortyapp.repo.UserRepository
+import com.mustafaunlu.rickandmortyapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: RetrofitRepository
+    private val repository: CharacterRepository,
+    private val userRepository: UserRepository
+
 ) : ViewModel(){
 
     private var locationList : MutableLiveData<Location> = MutableLiveData()
-    private var persons : MutableLiveData<ArrayList<PersonItem>> = MutableLiveData()
+    private var persons : MutableLiveData<ArrayList<Character>> = MutableLiveData()
 
 
     //API SERVICE
     fun getLocationData() : MutableLiveData<Location>{
         return locationList
     }
-    fun getPersonData() : MutableLiveData<ArrayList<PersonItem>>{
+    fun getPersonData() : MutableLiveData<ArrayList<Character>>{
         return persons
     }
-
-    suspend fun loadLocations(){
-        repository.getLocations(locationList)
+     fun loadLocations(){
+        viewModelScope.launch {
+            repository.getLocations(locationList)
+        }
     }
-
-    suspend fun fetchPersons(ids: String){
-        repository.fetchData(personSingleData = persons,ids=ids)
+     fun fetchPersons(ids: String){
+        viewModelScope.launch {
+            repository.fetchData(personSingleData = persons,ids=ids)
+        }
     }
 
     fun uploadData(locations: MutableList<Result>,ids: MutableList<String>,index : Int){
@@ -40,6 +51,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    //Shared Pref
+    fun isFirstTime(onResult: (Boolean) -> Unit){
+        viewModelScope.launch{
+            onResult(userRepository.isFirstTime())
+        }
+    }
+
+    fun setNotFirstTime(){
+        viewModelScope.launch {
+            userRepository.setNotFirstTime()
+        }
+    }
+
+
+
+    //Simple Tools
     fun findId(url : String) : String{
         return  url.substring((url.indexOf("character")+10),url.length)
     }
@@ -51,6 +78,8 @@ class HomeViewModel @Inject constructor(
         val string = ids.joinToString()
         return string.replace(" ","")
     }
+
+
 
 
 

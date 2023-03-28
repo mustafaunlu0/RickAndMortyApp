@@ -2,6 +2,10 @@ package com.mustafaunlu.rickandmortyapp.screen
 
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,9 +14,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
@@ -21,20 +22,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,9 +45,7 @@ import com.airbnb.lottie.compose.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
-import com.mustafaunlu.rickandmortyapp.model.Character
-import com.mustafaunlu.rickandmortyapp.model.character.Person
-import com.mustafaunlu.rickandmortyapp.model.character.PersonItem
+import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Result
 import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
@@ -75,24 +76,17 @@ fun MainScreen(
     }
 
 
-    LaunchedEffect(Unit){
-        homeViewModel.loadLocations()
-
-    }
-
+    homeViewModel.setNotFirstTime()
+    homeViewModel.loadLocations()
     if(data.value != null){
         locations= data.value!!.results as MutableList<Result>
         homeViewModel.uploadData(locations,ids,0)
-        LaunchedEffect(Unit){
             homeViewModel.fetchPersons(homeViewModel.convertToString(ids))
-
-        }
     }
     LaunchedEffect(id){
         homeViewModel.fetchPersons(id)
 
     }
-
 
     Scaffold(
         topBar = {
@@ -153,7 +147,7 @@ fun LocationList(
     homeViewModel: HomeViewModel = hiltViewModel(),
     idChanged : (String) -> Unit,
 
-) {
+    ) {
 
     var backColor by remember {
         mutableStateOf(buttonBackgroundColor)
@@ -171,34 +165,36 @@ fun LocationList(
         items(locations.size) {
 
 
-            Button(
-                onClick = {
-                    selectedLocIndex = it
-                    ids.clear()
-                    homeViewModel.uploadData(locations as MutableList<Result>,ids,it)
-                    idChanged(homeViewModel.convertToString(ids))
+                Button(
+                    onClick = {
+                        selectedLocIndex = it
+                        ids.clear()
+                        homeViewModel.uploadData(locations as MutableList<Result>,ids,it)
+                        idChanged(homeViewModel.convertToString(ids))
 
 
-                },
-                modifier = Modifier.padding(10.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
-                    contentColor = buttonContentColor
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = TextWhite
-                )
-
-            ) {
-                Text(
-                    text = locations[it].name,
-                    fontFamily = FontFamily(
-                        Font(R.font.firefans)
+                    },
+                    modifier = Modifier.padding(10.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
+                        contentColor = buttonContentColor
+                    ),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = TextWhite
                     )
-                )
-            }
+
+                ) {
+                    Text(
+                        text = locations[it].name,
+                        fontFamily = FontFamily(
+                            Font(R.font.firefans)
+                        )
+                    )
+                }
+
+
         }
     }
 
@@ -210,7 +206,7 @@ fun LocationList(
 fun CharacterList(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
-    persons :ArrayList<PersonItem>?
+    persons :ArrayList<Character>?
 ) {
 
 
@@ -224,8 +220,11 @@ fun CharacterList(
     ) {
         if(persons != null){
             items(persons.size) {
-                CharacterItem( navigator,persons[it])
-
+               CharacterItem( navigator,persons[it])
+            }
+        }else{
+            items(5){
+                ShimmerCharacter()
             }
         }
 
@@ -238,7 +237,7 @@ fun CharacterList(
 @Composable
 fun CharacterItem(
     navigator: DestinationsNavigator,
-    person: PersonItem,
+    person: Character,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
 
@@ -328,7 +327,7 @@ fun specifyColor(gender: String): Color {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CharacterImage(
-    character: PersonItem,
+    character: Character,
     modifier: Modifier = Modifier
 ) {
 
@@ -344,7 +343,7 @@ fun CharacterImage(
 
 @Composable
 fun CharacterName(
-    character: PersonItem,
+    character: Character,
     modifier: Modifier = Modifier
 ) {
     Text(
@@ -353,7 +352,7 @@ fun CharacterName(
         modifier = modifier
             .padding(horizontal = 10.dp),
         textAlign = TextAlign.Center,
-        fontSize = 26.sp,
+        fontSize = 22.sp,
         fontFamily = FontFamily(Font(R.font.firefans))
     )
 }
@@ -396,7 +395,6 @@ fun MortyAnimation(
 }
 
 
-//Textte kaldık
 @Composable
 fun DescriptionPart() {
 
@@ -456,4 +454,51 @@ fun DescriptionPart() {
     }
 
 
+}
+
+@Composable
+fun ShimmerCharacter(
+    modifier: Modifier = Modifier,
+    ){
+
+        Box(
+            modifier = modifier
+                .height(150.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 10.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .shimmerEffect()
+
+            )
+
+}
+
+
+fun Modifier.shimmerEffect() : Modifier = composed{
+    var size by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+    val transition = rememberInfiniteTransition()
+    val startOffsetX by transition.animateFloat(
+        initialValue = -2 * size.width.toFloat(),
+        targetValue = 2 * size.width.toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000)
+        )
+    )
+
+    background(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                TopBar,
+                MainColor,
+                DarkerButtonBlue,
+            ),
+            start = Offset(startOffsetX, 0f),
+            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+        )
+    )
+        .onGloballyPositioned {
+            size = it.size
+        }
 }
