@@ -366,7 +366,7 @@ fun GenderIcon(
         when (gender) {
             "Male" -> painterResource(id = R.drawable.ic_male)
             "Female" -> painterResource(id = R.drawable.ic_female)
-            else -> painterResource(id = R.drawable.ic_unknown)
+            else -> painterResource(id = R.drawable.ic_circle_unknown)
         },
         contentDescription = "gender",
         tint = Color.White,
