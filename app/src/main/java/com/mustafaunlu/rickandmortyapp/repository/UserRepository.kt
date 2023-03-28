@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.repo
+package com.mustafaunlu.rickandmortyapp.repository
 
 import android.content.SharedPreferences
 import com.mustafaunlu.rickandmortyapp.util.Constants

@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.api
+package com.mustafaunlu.rickandmortyapp.network
 
 import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Location

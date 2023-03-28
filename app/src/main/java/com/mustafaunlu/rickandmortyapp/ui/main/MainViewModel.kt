@@ -1,23 +1,19 @@
-package com.mustafaunlu.rickandmortyapp.viewmodel
+package com.mustafaunlu.rickandmortyapp.ui.main
 
-import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Location
 import com.mustafaunlu.rickandmortyapp.model.locations.Result
-import com.mustafaunlu.rickandmortyapp.repo.CharacterRepository
-import com.mustafaunlu.rickandmortyapp.repo.UserRepository
-import com.mustafaunlu.rickandmortyapp.util.Constants
+import com.mustafaunlu.rickandmortyapp.repository.CharacterRepository
+import com.mustafaunlu.rickandmortyapp.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val repository: CharacterRepository,
     private val userRepository: UserRepository
 
@@ -45,7 +41,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun uploadData(locations: MutableList<Result>,ids: MutableList<String>,index : Int){
+    fun uploadData(locations: MutableList<Result>, ids: MutableList<String>, index : Int){
         locations[index].residents.forEach {  human ->
             ids.add(findId(human))
         }

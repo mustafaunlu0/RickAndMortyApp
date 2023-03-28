@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.viewmodel
+package com.mustafaunlu.rickandmortyapp.ui.detail
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel

@@ -1,9 +1,8 @@
-package com.mustafaunlu.rickandmortyapp.module
+package com.mustafaunlu.rickandmortyapp.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mustafaunlu.rickandmortyapp.api.RetrofitService
-import com.mustafaunlu.rickandmortyapp.repo.UserRepository
+import com.mustafaunlu.rickandmortyapp.network.RetrofitService
 import com.mustafaunlu.rickandmortyapp.util.Constants
 import com.mustafaunlu.rickandmortyapp.util.Constants.BASE_URL
 import dagger.Module
@@ -23,7 +22,7 @@ object ApiModule {
     //Retrofit - API
     @Provides
     @Singleton
-    fun getRetrofitServiceInstance(retrofit: Retrofit) : RetrofitService{
+    fun getRetrofitServiceInstance(retrofit: Retrofit) : RetrofitService {
         return retrofit.create(RetrofitService::class.java)
     }
 

@@ -49,7 +49,7 @@ import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Result
 import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
-import com.mustafaunlu.rickandmortyapp.viewmodel.HomeViewModel
+import com.mustafaunlu.rickandmortyapp.ui.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -60,7 +60,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 fun MainScreen(
     navigator: DestinationsNavigator,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 
 
 ) {
@@ -68,23 +68,23 @@ fun MainScreen(
     var locations: MutableList<Result> by mutableStateOf(mutableListOf())
     val ids : MutableList<String> by mutableStateOf(mutableListOf())
 
-    val persons  by homeViewModel.getPersonData().observeAsState()
-    val data = homeViewModel.getLocationData().observeAsState()
+    val persons  by mainViewModel.getPersonData().observeAsState()
+    val data = mainViewModel.getLocationData().observeAsState()
 
     var id by remember{
         mutableStateOf("")
     }
 
 
-    homeViewModel.setNotFirstTime()
-    homeViewModel.loadLocations()
+    mainViewModel.setNotFirstTime()
+    mainViewModel.loadLocations()
     if(data.value != null){
         locations= data.value!!.results as MutableList<Result>
-        homeViewModel.uploadData(locations,ids,0)
-            homeViewModel.fetchPersons(homeViewModel.convertToString(ids))
+        mainViewModel.uploadData(locations,ids,0)
+            mainViewModel.fetchPersons(mainViewModel.convertToString(ids))
     }
     LaunchedEffect(id){
-        homeViewModel.fetchPersons(id)
+        mainViewModel.fetchPersons(id)
 
     }
 
@@ -144,7 +144,7 @@ fun LocationList(
     ids: ArrayList<String>,
     buttonBackgroundColor: Color = DarkerButtonBlue,
     buttonContentColor: Color = TextWhite,
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     idChanged : (String) -> Unit,
 
     ) {
@@ -169,8 +169,8 @@ fun LocationList(
                     onClick = {
                         selectedLocIndex = it
                         ids.clear()
-                        homeViewModel.uploadData(locations as MutableList<Result>,ids,it)
-                        idChanged(homeViewModel.convertToString(ids))
+                        mainViewModel.uploadData(locations as MutableList<Result>,ids,it)
+                        idChanged(mainViewModel.convertToString(ids))
 
 
                     },
@@ -238,7 +238,7 @@ fun CharacterList(
 fun CharacterItem(
     navigator: DestinationsNavigator,
     person: Character,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
     var episode by remember{
@@ -256,9 +256,9 @@ fun CharacterItem(
             .clickable {
                 person.episode.forEachIndexed { index, item ->
                     episode += if (index == person.episode.size - 1) {
-                        homeViewModel.findEpisode(item)
+                        mainViewModel.findEpisode(item)
                     } else {
-                        homeViewModel.findEpisode(item) + ", "
+                        mainViewModel.findEpisode(item) + ", "
                     }
 
 

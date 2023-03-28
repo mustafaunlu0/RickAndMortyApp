@@ -32,7 +32,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
-import com.mustafaunlu.rickandmortyapp.viewmodel.DetailViewModel
+import com.mustafaunlu.rickandmortyapp.ui.detail.DetailViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -55,8 +55,8 @@ fun DetailScreen(
 
     val color = remember { Animatable(MainColor) }
     LaunchedEffect(Unit) {
-        color.animateTo(DarkerButtonBlue, animationSpec = tween(1000))
-        color.animateTo(MainColor, animationSpec = tween(5000))
+        color.animateTo(Color(0xFFF5D95B), animationSpec = tween(200))
+        color.animateTo(MainColor, animationSpec = tween(3000))
     }
 
 
@@ -110,7 +110,6 @@ fun DetailScreen(
             item {
                 Spacer(modifier = modifier.height(20.dp))
                 CharImageSection(imageUrl = imageUrl)
-                Spacer(modifier = modifier.height(20.dp))
                 CharInfoSection(
                     status = status,
                     specy = specy,
@@ -166,28 +165,28 @@ fun InfoSection(
 ) {
     Row(
         modifier
-            .padding(start = 20.dp)
+            .padding(horizontal = 20.dp,vertical = 5.dp)
             .fillMaxWidth()
             .padding(top = 10.dp),
         verticalAlignment = Alignment.CenterVertically, content = {
             Text(
                 text = "$info:",
                 color = TextWhite,
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.avenir)),
                 modifier = Modifier
-                    .padding(start = 30.dp)
-                    .weight(1f)
+                    .padding(horizontal = 20.dp,vertical = 5.dp)
+                    .weight(1.4f)
             )
 
             Text(
                 text = value,
                 color = SecondColor,
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.avenir)),
                 modifier = Modifier
-                    .padding(start = 20.dp)
+                    .padding(horizontal = 20.dp,vertical = 5.dp)
                     .weight(2f)
 
             )
@@ -210,7 +209,7 @@ fun CharImageSection(
     ) {
         Box(
             modifier = Modifier
-                .width(250.dp)
+                .width(275.dp)
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color.Gray),

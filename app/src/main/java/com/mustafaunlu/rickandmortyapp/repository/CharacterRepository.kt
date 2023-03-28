@@ -1,7 +1,7 @@
-package com.mustafaunlu.rickandmortyapp.repo
+package com.mustafaunlu.rickandmortyapp.repository
 
 import androidx.lifecycle.MutableLiveData
-import com.mustafaunlu.rickandmortyapp.api.RetrofitService
+import com.mustafaunlu.rickandmortyapp.network.RetrofitService
 import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Location
 import kotlinx.coroutines.Dispatchers
