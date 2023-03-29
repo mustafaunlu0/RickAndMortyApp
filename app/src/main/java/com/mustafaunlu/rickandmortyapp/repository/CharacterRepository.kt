@@ -18,7 +18,6 @@ class CharacterRepository @Inject constructor(
 ) {
 
     suspend fun getLocations(locationData : MutableLiveData<Location>){
-
         withContext(Dispatchers.IO){
             retrofitService.getLocations().enqueue(object : Callback<Location>{
                 override fun onResponse(call: Call<Location>, response: Response<Location>) {
@@ -27,11 +26,8 @@ class CharacterRepository @Inject constructor(
                 override fun onFailure(call: Call<Location>, t: Throwable) {
                     println(t.message)
                 }
-
             })
         }
-
-
     }
 
     suspend fun fetchData(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String){
@@ -51,7 +47,6 @@ class CharacterRepository @Inject constructor(
                             getSingleChar(personSingleData = personSingleData,ids=ids)
 
                         }
-
                     }else{
                         println(t.message)
                     }
@@ -73,7 +68,7 @@ class CharacterRepository @Inject constructor(
                         personSingleData.postValue(oneList)
                     }
                     override fun onFailure(call: Call<Character>, t: Throwable) {
-                        println("son method da çalışmadı!")
+                        println(t.message)
                     }
                 })
             }

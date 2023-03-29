@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.di
+package com.mustafaunlu.rickandmortyapp.model.di
 
 import android.content.Context
 import android.content.SharedPreferences

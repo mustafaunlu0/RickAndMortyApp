@@ -10,7 +10,6 @@ class DetailViewModel : ViewModel(){
 
     @SuppressLint("NewApi")
     fun dateConvert(date: String): String {
-
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         return LocalDateTime.parse(date, formatter)
             .format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss"))

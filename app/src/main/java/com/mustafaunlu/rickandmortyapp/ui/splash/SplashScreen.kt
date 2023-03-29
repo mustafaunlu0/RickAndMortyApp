@@ -35,7 +35,7 @@ fun SplashScreen(
     mainViewModel: MainViewModel = hiltViewModel()
                  ) {
 
-    //first Entry
+    //First Entry Control
     val isFirst = remember{
         mutableStateOf(true)
     }
@@ -61,9 +61,6 @@ fun SplashScreen(
 
         delay(1500L)
         navigator.navigate(MainScreenDestination())
-
-
-
 
 
     }
