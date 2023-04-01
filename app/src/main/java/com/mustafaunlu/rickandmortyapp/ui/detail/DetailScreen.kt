@@ -73,8 +73,11 @@ fun DetailScreen(
                         Text(
                             text = name,
                             color = SecondColor,
-                            fontSize = 20.sp,
-                            fontFamily = FontFamily(Font(R.font.avenir))
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily(Font(R.font.avenir),
+
+                            )
                         )
                     }
 
@@ -86,7 +89,7 @@ fun DetailScreen(
                         tint = SecondColor,
                         modifier = Modifier
                             .padding(10.dp)
-                            .size(25.dp)
+                            .size(23.dp)
                             .clickable {
                                 navigator.navigate(MainScreenDestination())
                             }
@@ -151,7 +154,7 @@ fun CharInfoSection(
         InfoSection(info = "Origin", value = origin)
         InfoSection(info = "Location", value = location)
         InfoSection(info = "Episodes", value = episodes)
-        InfoSection(info = "Created at (in API)", value = detailViewModel.dateConvert(apiDate))
+        InfoSection(info = "Created at (in API)", value = detailViewModel.dateConvert(apiDate), modifier = Modifier.padding(bottom = 15.dp))
 
     }
 
@@ -167,17 +170,14 @@ fun InfoSection(
         modifier
             .padding(horizontal = 20.dp,vertical = 5.dp)
             .fillMaxWidth()
-            .padding(top = 10.dp),
+            .padding(horizontal = 20.dp,vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically, content = {
             Text(
                 text = "$info:",
                 color = TextWhite,
                 fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.avenir)),
-                modifier = Modifier
-                    .padding(horizontal = 20.dp,vertical = 5.dp)
-                    .weight(1.4f)
+                modifier = Modifier.weight(1.4f)
             )
 
             Text(
@@ -185,9 +185,7 @@ fun InfoSection(
                 color = SecondColor,
                 fontSize = 22.sp,
                 fontFamily = FontFamily(Font(R.font.avenir)),
-                modifier = Modifier
-                    .padding(horizontal = 20.dp,vertical = 5.dp)
-                    .weight(2f)
+                modifier = Modifier.weight(2f)
 
             )
 
