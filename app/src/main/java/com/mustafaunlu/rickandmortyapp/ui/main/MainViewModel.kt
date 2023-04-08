@@ -30,9 +30,9 @@ class MainViewModel @Inject constructor(
     fun getPersonData() : MutableLiveData<ArrayList<Character>>{
         return persons
     }
-     fun loadLocations(){
+     fun loadLocations(pageNumber:Int=1){
         viewModelScope.launch {
-            repository.getLocations(locationList)
+            repository.getLocations(locationList,pageNumber)
         }
     }
      fun fetchPersons(ids: String){

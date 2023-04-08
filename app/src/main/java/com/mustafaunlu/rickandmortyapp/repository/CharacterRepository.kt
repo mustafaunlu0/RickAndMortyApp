@@ -17,9 +17,9 @@ class CharacterRepository @Inject constructor(
     private val retrofitService : RetrofitService
 ) {
 
-    suspend fun getLocations(locationData : MutableLiveData<Location>){
+    suspend fun getLocations(locationData : MutableLiveData<Location>,pageNumber : Int){
         withContext(Dispatchers.IO){
-            retrofitService.getLocations().enqueue(object : Callback<Location>{
+            retrofitService.getLocations(pageNumber).enqueue(object : Callback<Location>{
                 override fun onResponse(call: Call<Location>, response: Response<Location>) {
                     locationData.postValue(response.body())
                 }
