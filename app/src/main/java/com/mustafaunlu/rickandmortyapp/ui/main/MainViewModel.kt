@@ -7,6 +7,7 @@ import com.mustafaunlu.rickandmortyapp.model.character.Character
 import com.mustafaunlu.rickandmortyapp.model.locations.Location
 import com.mustafaunlu.rickandmortyapp.model.locations.Result
 import com.mustafaunlu.rickandmortyapp.repository.CharacterRepository
+import com.mustafaunlu.rickandmortyapp.repository.LocationRepository
 import com.mustafaunlu.rickandmortyapp.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: CharacterRepository,
+    private val charRepository: CharacterRepository,
+    private val locationRepository : LocationRepository,
     private val userRepository: UserRepository
 
 ) : ViewModel(){
@@ -32,12 +34,12 @@ class MainViewModel @Inject constructor(
     }
      fun loadLocations(pageNumber:Int=1){
         viewModelScope.launch {
-            repository.getLocations(locationList,pageNumber)
+            locationRepository.getLocations(locationList,pageNumber)
         }
     }
      fun fetchPersons(ids: String){
         viewModelScope.launch {
-            repository.fetchData(personSingleData = persons,ids=ids)
+            charRepository.fetchData(personSingleData = persons,ids=ids)
         }
     }
 
