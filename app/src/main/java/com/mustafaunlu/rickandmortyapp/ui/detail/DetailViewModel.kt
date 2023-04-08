@@ -13,7 +13,8 @@ class DetailViewModel : ViewModel(){
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         return LocalDateTime.parse(date, formatter)
             .format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm:ss"))
-
     }
+
+
 
 }
