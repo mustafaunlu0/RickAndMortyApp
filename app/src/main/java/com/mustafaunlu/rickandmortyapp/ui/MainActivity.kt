@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.ui.main
+package com.mustafaunlu.rickandmortyapp.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

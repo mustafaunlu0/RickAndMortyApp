@@ -1,9 +1,8 @@
-package com.mustafaunlu.rickandmortyapp.repository
+package com.mustafaunlu.rickandmortyapp.data.repository
 
 import androidx.lifecycle.MutableLiveData
-import com.mustafaunlu.rickandmortyapp.network.RetrofitService
-import com.mustafaunlu.rickandmortyapp.model.character.Character
-import com.mustafaunlu.rickandmortyapp.model.locations.Location
+import com.mustafaunlu.rickandmortyapp.data.model.character.Character
+import com.mustafaunlu.rickandmortyapp.data.network.RetrofitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -16,7 +15,6 @@ import javax.inject.Inject
 class CharacterRepository @Inject constructor(
     private val retrofitService : RetrofitService
 ) {
-
 
 
     suspend fun fetchData(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String){
@@ -34,8 +32,8 @@ class CharacterRepository @Inject constructor(
                     if(ids.isNotEmpty()){
                         runBlocking {
                             getSingleChar(personSingleData = personSingleData,ids=ids)
-
                         }
+
                     }else{
                         println(t.message)
                     }
@@ -46,7 +44,10 @@ class CharacterRepository @Inject constructor(
         }
 
 
+
+
     }
+
 
     suspend fun getSingleChar(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String ){
             withContext(Dispatchers.IO){

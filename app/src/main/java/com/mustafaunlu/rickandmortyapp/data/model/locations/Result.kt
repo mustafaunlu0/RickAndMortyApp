@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.model.locations
+package com.mustafaunlu.rickandmortyapp.data.model.locations
 
 data class Result(
     val created: String,

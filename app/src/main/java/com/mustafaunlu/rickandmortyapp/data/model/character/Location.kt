@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.model.character
+package com.mustafaunlu.rickandmortyapp.data.model.character
 
 data class Location(
     val name: String,

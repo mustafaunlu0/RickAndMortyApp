@@ -1,16 +1,16 @@
-package com.mustafaunlu.rickandmortyapp.network
+package com.mustafaunlu.rickandmortyapp.data.network
 
-import com.mustafaunlu.rickandmortyapp.model.character.Character
-import com.mustafaunlu.rickandmortyapp.model.locations.Location
+import com.mustafaunlu.rickandmortyapp.data.model.character.Character
+import com.mustafaunlu.rickandmortyapp.data.model.locations.Location
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-
 interface RetrofitService {
 
+
     @GET("api/location")
-    fun getLocations(@Query("page") page :Int) : Call<Location>
+    suspend fun getLocationsForPaging(@Query("page") page :Int) : Location
 
     @GET("api/character/{id}")
     fun getCharacters(@Path("id") ids : String) : Call<ArrayList<Character>>

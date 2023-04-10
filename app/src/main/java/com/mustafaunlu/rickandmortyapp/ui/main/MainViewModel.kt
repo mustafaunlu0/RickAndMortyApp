@@ -3,13 +3,19 @@ package com.mustafaunlu.rickandmortyapp.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mustafaunlu.rickandmortyapp.model.character.Character
-import com.mustafaunlu.rickandmortyapp.model.locations.Location
-import com.mustafaunlu.rickandmortyapp.model.locations.Result
-import com.mustafaunlu.rickandmortyapp.repository.CharacterRepository
-import com.mustafaunlu.rickandmortyapp.repository.LocationRepository
-import com.mustafaunlu.rickandmortyapp.repository.UserRepository
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.mustafaunlu.rickandmortyapp.data.model.character.Character
+import com.mustafaunlu.rickandmortyapp.data.model.locations.Location
+import com.mustafaunlu.rickandmortyapp.data.model.locations.Result
+import com.mustafaunlu.rickandmortyapp.data.paging.LocationPagingSource
+import com.mustafaunlu.rickandmortyapp.data.repository.CharacterRepository
+import com.mustafaunlu.rickandmortyapp.data.repository.LocationRepository
+import com.mustafaunlu.rickandmortyapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,31 +27,29 @@ class MainViewModel @Inject constructor(
 
 ) : ViewModel(){
 
-    private var locationList : MutableLiveData<Location> = MutableLiveData()
     private var persons : MutableLiveData<ArrayList<Character>> = MutableLiveData()
 
-
     //API SERVICE
-    fun getLocationData() : MutableLiveData<Location>{
-        return locationList
+    fun getLocations() : Flow<PagingData<Result>>{
+        return locationRepository.getLocationsForPaging().cachedIn(viewModelScope)
     }
+
+
+
+
     fun getPersonData() : MutableLiveData<ArrayList<Character>>{
         return persons
     }
-     fun loadLocations(pageNumber:Int=1){
-        viewModelScope.launch {
-            locationRepository.getLocations(locationList,pageNumber)
-        }
-    }
+
      fun fetchPersons(ids: String){
         viewModelScope.launch {
             charRepository.fetchData(personSingleData = persons,ids=ids)
         }
     }
 
-    fun uploadData(locations: MutableList<Result>, ids: MutableList<String>, index : Int){
-        locations[index].residents.forEach {  human ->
-            ids.add(findId(human))
+    fun uploadData(locations: MutableList<Result>, ids: ArrayList<String>, index : Int){
+        locations[index].residents.forEach {  humanUrl ->
+            ids.add(findId(humanUrl))
         }
     }
 

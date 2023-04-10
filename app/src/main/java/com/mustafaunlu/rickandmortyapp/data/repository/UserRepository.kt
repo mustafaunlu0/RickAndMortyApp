@@ -1,7 +1,7 @@
-package com.mustafaunlu.rickandmortyapp.repository
+package com.mustafaunlu.rickandmortyapp.data.repository
 
 import android.content.SharedPreferences
-import com.mustafaunlu.rickandmortyapp.util.Constants
+import com.mustafaunlu.rickandmortyapp.common.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

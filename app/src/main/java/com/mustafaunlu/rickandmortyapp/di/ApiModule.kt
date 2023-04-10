@@ -1,10 +1,10 @@
-package com.mustafaunlu.rickandmortyapp.model.di
+package com.mustafaunlu.rickandmortyapp.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mustafaunlu.rickandmortyapp.network.RetrofitService
-import com.mustafaunlu.rickandmortyapp.util.Constants
-import com.mustafaunlu.rickandmortyapp.util.Constants.BASE_URL
+import com.mustafaunlu.rickandmortyapp.common.Constants
+import com.mustafaunlu.rickandmortyapp.common.Constants.BASE_URL
+import com.mustafaunlu.rickandmortyapp.data.network.RetrofitService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

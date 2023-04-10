@@ -42,17 +42,24 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.airbnb.lottie.compose.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
-import com.mustafaunlu.rickandmortyapp.model.character.Character
-import com.mustafaunlu.rickandmortyapp.model.locations.Result
+import com.mustafaunlu.rickandmortyapp.data.model.character.Character
+import com.mustafaunlu.rickandmortyapp.data.model.locations.Result
 import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
 import com.mustafaunlu.rickandmortyapp.ui.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.runtime.remember
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemsIndexed
 
 @SuppressLint(
     "UnusedMaterialScaffoldPaddingParameter",
@@ -65,27 +72,9 @@ fun MainScreen(
     navigator: DestinationsNavigator, mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
-    var locations: MutableList<Result> by mutableStateOf(mutableListOf())
-    val ids: MutableList<String> by mutableStateOf(mutableListOf())
-
-    val persons by mainViewModel.getPersonData().observeAsState()
-    val data = mainViewModel.getLocationData().observeAsState()
-
-    var id by remember {
-        mutableStateOf("")
-    }
-
-
     mainViewModel.setNotFirstTime()
-    mainViewModel.loadLocations()
-    if (data.value != null) {
-        locations = data.value!!.results as MutableList<Result>
-        mainViewModel.uploadData(locations, ids, 0)
-        mainViewModel.fetchPersons(mainViewModel.convertToString(ids))
-    }
-    LaunchedEffect(id) {
-        mainViewModel.fetchPersons(id)
-    }
+
+
 
 
     Scaffold(
@@ -116,24 +105,145 @@ fun MainScreen(
         ) {
             item {
                 DescriptionPart()
-                LocationList(
-                    locations = locations,
-                    ids = ids as ArrayList<String>,
-                ) {
-                    id = it
-
-                }
+                LocationList()
                 CharacterList(
-                    persons = persons,
                     navigator = navigator,
-                    )
+                )
 
             }
 
         }
 
-
     }
+
+
+}
+
+
+@Composable
+fun LocationList(
+    modifier: Modifier = Modifier,
+    buttonBackgroundColor: Color = DarkerButtonBlue,
+    buttonContentColor: Color = TextWhite,
+    mainViewModel: MainViewModel = hiltViewModel(),
+) {
+
+    var backColor by remember {
+        mutableStateOf(buttonBackgroundColor)
+    }
+    var selectedLocIndex by remember {
+        mutableStateOf(0)
+    }
+    var isFirst by remember {
+        mutableStateOf(true)
+    }
+
+    val ids: ArrayList<String> = arrayListOf()
+
+    val locationsForPaging = mainViewModel.getLocations().collectAsLazyPagingItems()
+
+
+    LazyRow(
+        modifier = modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .fillMaxWidth()
+    ) {
+        if (locationsForPaging.loadState.refresh == LoadState.Loading && locationsForPaging.itemCount == 0) {
+
+
+
+
+
+
+            items(5) {
+                Button(
+                    onClick = {
+
+                    },
+                    modifier = Modifier.padding(10.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = backColor,
+                        contentColor = buttonContentColor
+                    ),
+                    border = BorderStroke(
+                        width = 1.dp, color = TextWhite
+                    )
+
+                ) {
+                    Text(
+                        text = "Laoding", fontFamily = FontFamily(
+                            Font(R.font.avenir)
+                        )
+                    )
+                }
+
+            }
+
+
+        }
+
+        itemsIndexed(locationsForPaging) { index, element ->
+            //Bringing the chars of location id 1 by default for the first load
+            if(isFirst){
+
+                mainViewModel.uploadData(locationsForPaging.itemSnapshotList.items as MutableList<Result>,ids,0)
+                mainViewModel.fetchPersons(mainViewModel.convertToString(ids))
+                isFirst=false
+            }
+
+            Button(
+                onClick = {
+
+                    selectedLocIndex = index
+
+                    ids.clear()
+
+                    mainViewModel.uploadData(
+                        locationsForPaging.itemSnapshotList.items as MutableList<Result>,
+                        ids,
+                        index
+                    )
+                    mainViewModel.fetchPersons(mainViewModel.convertToString(ids))
+
+
+
+                },
+                modifier = Modifier.padding(10.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = if (selectedLocIndex == index) SecondColor else backColor,
+                    contentColor = buttonContentColor
+                ),
+                border = BorderStroke(
+                    width = 1.dp, color = TextWhite
+                )
+
+            ) {
+                Text(
+                    text = locationsForPaging.itemSnapshotList[index]!!.name,
+                    fontFamily = FontFamily(
+                        Font(R.font.avenir)
+                    )
+                )
+            }
+
+
+        }
+
+        if (locationsForPaging.loadState.append == LoadState.Loading) {
+            item {
+
+                CircularProgressIndicator(
+                    modifier = Modifier.fillMaxSize(0.3f),
+                    color = Color.Green
+                )
+
+
+            }
+        }
+    }
+
 
 }
 
@@ -194,74 +304,15 @@ fun DescriptionPart() {
 
 
 }
-@SuppressLint("MutableCollectionMutableState")
-@Composable
-fun LocationList(
-    modifier: Modifier = Modifier,
-    locations: List<Result>,
-    ids: ArrayList<String>,
-    buttonBackgroundColor: Color = DarkerButtonBlue,
-    buttonContentColor: Color = TextWhite,
-    mainViewModel: MainViewModel = hiltViewModel(),
-    idChanged: (String) -> Unit,
-
-    ) {
-
-    var backColor by remember {
-        mutableStateOf(buttonBackgroundColor)
-    }
-    var selectedLocIndex by remember {
-        mutableStateOf(0)
-    }
-
-
-    LazyRow(
-        modifier = modifier
-            .padding(start = 10.dp, end = 10.dp)
-            .fillMaxWidth()
-    ) {
-        items(locations.size) {
-
-
-            Button(
-                onClick = {
-                    selectedLocIndex = it
-                    ids.clear()
-                    mainViewModel.uploadData(locations as MutableList<Result>, ids, it)
-                    idChanged(mainViewModel.convertToString(ids))
-
-
-                },
-                modifier = Modifier.padding(10.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (selectedLocIndex == it) SecondColor else backColor,
-                    contentColor = buttonContentColor
-                ),
-                border = BorderStroke(
-                    width = 1.dp, color = TextWhite
-                )
-
-            ) {
-                Text(
-                    text = locations[it].name, fontFamily = FontFamily(
-                        Font(R.font.avenir)
-                    )
-                )
-            }
-
-
-        }
-    }
-
-
-}
 
 
 @Composable
 fun CharacterList(
-    modifier: Modifier = Modifier, navigator: DestinationsNavigator, persons: ArrayList<Character>?
-) {
+    modifier: Modifier = Modifier, navigator: DestinationsNavigator,
+    mainViewModel: MainViewModel = hiltViewModel(),
+
+    ) {
+    val persons by mainViewModel.getPersonData().observeAsState()
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
     LazyVerticalGrid(
@@ -272,8 +323,8 @@ fun CharacterList(
         ), modifier = modifier.height((screenHeight * 0.7).dp)
     ) {
         if (persons != null) {
-            items(persons.size) {
-                CharacterItem(navigator, persons[it])
+            items(persons!!.size) {
+                CharacterItem(navigator, persons!![it])
             }
         } else {
             items(5) {
@@ -323,10 +374,10 @@ fun CharacterItem(
                     )
                 )
             },
-        ) {
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            ) {
+        ) {
             when (person.gender) {
                 "Female" -> {
                     CharacterImage(

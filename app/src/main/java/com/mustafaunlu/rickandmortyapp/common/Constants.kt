@@ -1,4 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.util
+package com.mustafaunlu.rickandmortyapp.common
 
 object Constants {
 
