@@ -19,28 +19,21 @@ class CharacterRepository @Inject constructor(
 
     suspend fun fetchData(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String){
 
-        withContext(Dispatchers.IO){
-            retrofitService.getCharacters(ids).enqueue(object  : Callback<ArrayList<Character>>{
-                override fun onResponse(
-                    call: Call<ArrayList<Character>>,
-                    response: Response<ArrayList<Character>>
-                ) {
+        withContext(Dispatchers.IO) {
+            try {
+                val response = retrofitService.getCharacters(ids).execute()
+                if (response.isSuccessful) {
                     personSingleData.postValue(response.body())
+                } else {
+                    // Handle error
                 }
-
-                override fun onFailure(call: Call<ArrayList<Character>>, t: Throwable) {
-                    if(ids.isNotEmpty()){
-                        runBlocking {
-                            getSingleChar(personSingleData = personSingleData,ids=ids)
-                        }
-
-                    }else{
-                        println(t.message)
-                    }
+            } catch (t: Throwable) {
+                if (ids.isNotEmpty()) {
+                    getSingleChar(personSingleData = personSingleData, ids = ids)
+                } else {
+                    println(t.message)
                 }
-
-            })
-
+            }
         }
 
 

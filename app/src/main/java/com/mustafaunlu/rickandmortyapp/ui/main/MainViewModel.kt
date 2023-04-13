@@ -34,9 +34,6 @@ class MainViewModel @Inject constructor(
         return locationRepository.getLocationsForPaging().cachedIn(viewModelScope)
     }
 
-
-
-
     fun getPersonData() : MutableLiveData<ArrayList<Character>>{
         return persons
     }

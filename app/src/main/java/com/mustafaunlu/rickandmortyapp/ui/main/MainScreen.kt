@@ -315,6 +315,8 @@ fun CharacterList(
     val persons by mainViewModel.getPersonData().observeAsState()
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
+
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(1), contentPadding = PaddingValues(
 
