@@ -1,5 +1,4 @@
 package com.mustafaunlu.rickandmortyapp.di
-
 import android.content.Context
 import android.content.SharedPreferences
 import com.mustafaunlu.rickandmortyapp.common.Constants

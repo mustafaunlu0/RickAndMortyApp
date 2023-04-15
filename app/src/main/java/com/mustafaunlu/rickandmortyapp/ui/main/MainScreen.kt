@@ -50,7 +50,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
 import com.mustafaunlu.rickandmortyapp.data.model.character.Character
 import com.mustafaunlu.rickandmortyapp.data.model.locations.Result
-import com.mustafaunlu.rickandmortyapp.screen.destinations.DetailScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
 import com.mustafaunlu.rickandmortyapp.ui.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -58,8 +57,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.remember
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemsIndexed
+import com.mustafaunlu.rickandmortyapp.destinations.DetailScreenDestination
 
 @SuppressLint(
     "UnusedMaterialScaffoldPaddingParameter",
@@ -93,7 +92,7 @@ fun MainScreen(
                         )
                     }
                 },
-                backgroundColor = Color(0xFFF5D95B),
+                backgroundColor = TopBar,
                 elevation = 2.dp,
             )
         },
@@ -149,16 +148,9 @@ fun LocationList(
             .fillMaxWidth()
     ) {
         if (locationsForPaging.loadState.refresh == LoadState.Loading && locationsForPaging.itemCount == 0) {
-
-
-
-
-
-
             items(5) {
                 Button(
                     onClick = {
-
                     },
                     modifier = Modifier.padding(10.dp),
                     shape = RoundedCornerShape(20.dp),
@@ -184,7 +176,7 @@ fun LocationList(
         }
 
         itemsIndexed(locationsForPaging) { index, element ->
-            //Bringing the chars of location id 1 by default for the first load
+            // İlk yükleme için location id = 0 olan karakterleri getirir.
             if(isFirst){
 
                 mainViewModel.uploadData(locationsForPaging.itemSnapshotList.items as MutableList<Result>,ids,0)
@@ -194,19 +186,14 @@ fun LocationList(
 
             Button(
                 onClick = {
-
                     selectedLocIndex = index
-
                     ids.clear()
-
                     mainViewModel.uploadData(
                         locationsForPaging.itemSnapshotList.items as MutableList<Result>,
                         ids,
                         index
                     )
                     mainViewModel.fetchPersons(mainViewModel.convertToString(ids))
-
-
 
                 },
                 modifier = Modifier.padding(10.dp),

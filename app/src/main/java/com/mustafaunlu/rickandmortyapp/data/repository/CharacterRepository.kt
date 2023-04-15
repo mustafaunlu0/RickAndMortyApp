@@ -18,7 +18,6 @@ class CharacterRepository @Inject constructor(
 
 
     suspend fun fetchData(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String){
-
         withContext(Dispatchers.IO) {
             try {
                 val response = retrofitService.getCharacters(ids).execute()
@@ -28,8 +27,9 @@ class CharacterRepository @Inject constructor(
                     // Handle error
                 }
             } catch (t: Throwable) {
+                // Tek bir karakter gelmişse ona göre bir retrofit çağrısı yapılır
                 if (ids.isNotEmpty()) {
-                    getSingleChar(personSingleData = personSingleData, ids = ids)
+                    getSingleCharacter(personSingleData = personSingleData, ids = ids)
                 } else {
                     println(t.message)
                 }
@@ -42,7 +42,7 @@ class CharacterRepository @Inject constructor(
     }
 
 
-    suspend fun getSingleChar(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String ){
+    suspend fun getSingleCharacter(personSingleData : MutableLiveData<ArrayList<Character>>, ids: String ){
             withContext(Dispatchers.IO){
                 val oneList : ArrayList<Character> = arrayListOf()
                 retrofitService.getSingleChar(ids).enqueue(object  : Callback<Character>{

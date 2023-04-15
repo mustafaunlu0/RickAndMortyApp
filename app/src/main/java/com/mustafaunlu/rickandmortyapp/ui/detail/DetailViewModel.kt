@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter
 
 class DetailViewModel : ViewModel(){
 
+    // Çekilen tarih verisinin challenge için dönüştürülmesi
     @SuppressLint("NewApi")
     fun dateConvert(date: String): String {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")

@@ -1,5 +1,4 @@
-package com.mustafaunlu.rickandmortyapp.screen
-
+package com.mustafaunlu.rickandmortyapp.ui.detail
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.Animatable
@@ -31,9 +30,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.mustafaunlu.rickandmortyapp.R
-import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
+import com.mustafaunlu.rickandmortyapp.destinations.MainScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.theme.*
-import com.mustafaunlu.rickandmortyapp.ui.detail.DetailViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -54,6 +52,7 @@ fun DetailScreen(
     imageUrl: String,
 ) {
 
+    // Arka plan renk değişimi
     val color = remember { Animatable(MainColor) }
     LaunchedEffect(Unit) {
         color.animateTo(Color(0xFFF5D95B), animationSpec = tween(200))

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mustafaunlu.rickandmortyapp.R
-import com.mustafaunlu.rickandmortyapp.screen.destinations.MainScreenDestination
+import com.mustafaunlu.rickandmortyapp.destinations.MainScreenDestination
 import com.mustafaunlu.rickandmortyapp.ui.main.MainViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -35,12 +35,12 @@ fun SplashScreen(
     mainViewModel: MainViewModel = hiltViewModel()
                  ) {
 
-    //First Entry Control
+    // İlk giriş kontrol
     val isFirst = remember{
         mutableStateOf(true)
     }
 
-    // Entry Animation
+    // Giriş Animasyonu
     val scale = remember {
         Animatable(0f)
     }
@@ -64,6 +64,8 @@ fun SplashScreen(
 
 
     }
+
+
 
     Column(
         modifier = Modifier.fillMaxSize(),

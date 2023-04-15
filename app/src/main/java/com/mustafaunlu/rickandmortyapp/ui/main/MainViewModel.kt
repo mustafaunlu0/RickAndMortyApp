@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor(
 
     private var persons : MutableLiveData<ArrayList<Character>> = MutableLiveData()
 
-    //API SERVICE
+    // API SERVICE
     fun getLocations() : Flow<PagingData<Result>>{
         return locationRepository.getLocationsForPaging().cachedIn(viewModelScope)
     }
@@ -44,13 +44,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    // Alınan nesnedeki(Result sınıfı nesnesi) residents lerin idlerini ayıklar ve parametre olarak verilen idse yükler.
     fun uploadData(locations: MutableList<Result>, ids: ArrayList<String>, index : Int){
         locations[index].residents.forEach {  humanUrl ->
             ids.add(findId(humanUrl))
         }
     }
 
-    //Shared Pref
+    // SHARED PREF
     fun isFirstTime(onResult: (Boolean) -> Unit){
         viewModelScope.launch{
             onResult(userRepository.isFirstTime())
@@ -65,14 +66,17 @@ class MainViewModel @Inject constructor(
 
 
 
-    //Simple Tools
+    // SIMPLE TOOLS
+
     fun findId(url : String) : String{
         return  url.substring((url.indexOf("character")+10),url.length)
     }
 
+    // Bölüm sayısı ayıklar.
     fun findEpisode(url : String) : String{
         return  url.substring((url.indexOf("episode")+8),url.length)
     }
+    // Iddeki boşlukları kaldırırç
     fun convertToString(ids : MutableList<String>): String {
         val string = ids.joinToString()
         return string.replace(" ","")

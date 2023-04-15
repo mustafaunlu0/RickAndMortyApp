@@ -10,14 +10,15 @@ class LocationPagingSource @Inject constructor(
     private val retrofitService: RetrofitService,
 ) : PagingSource<Int, Result>(){
 
+    // Sayfalar arasındaki ilişkiyi belirler ve sayfalama işleminin sırasını düzenler.
     override fun getRefreshKey(state: PagingState<Int, Result>): Int? {
-        println("Burası Tetiklendi mi : getRefreshKey")
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
     }
 
+    // Sayfa yüklemesi yapar.
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
         return try {
             val page = params.key ?: 1

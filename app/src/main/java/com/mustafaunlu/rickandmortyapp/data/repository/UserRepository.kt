@@ -10,7 +10,7 @@ class UserRepository @Inject constructor(
     private val preferences: SharedPreferences
 ) {
 
-
+    // İlk giriş için welcome sonrasında hello yazması için gerekli kodlar
     suspend fun isFirstTime() : Boolean=
         withContext(Dispatchers.IO){
             preferences.getBoolean(Constants.FIRST_RUN_KEY,true)

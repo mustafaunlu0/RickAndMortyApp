@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.mustafaunlu.rickandmortyapp.screen.NavGraphs
+import com.mustafaunlu.rickandmortyapp.NavGraphs
 import com.mustafaunlu.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint

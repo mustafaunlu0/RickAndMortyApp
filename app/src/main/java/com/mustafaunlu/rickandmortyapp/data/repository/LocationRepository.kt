@@ -11,7 +11,7 @@ import javax.inject.Inject
 class LocationRepository @Inject constructor(
     private val retrofitService: RetrofitService
 ){
-
+    // Pager yapılandırması
     fun getLocationsForPaging() = Pager(
         config = PagingConfig(
             pageSize = 20,
