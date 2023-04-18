@@ -1,0 +1,2 @@
+# Mockup
+<img src="https://github.com/mustafaunlu0/RickAndMortyApp/blob/master/Screenshot_1681822700.png" width="350" height="550"/>           <img src="https://github.com/mustafaunlu0/RickAndMortyApp/blob/master/Screenshot_1681822706.png" width="350" height="550"/>           <img src="https://github.com/mustafaunlu0/RickAndMortyApp/blob/master/Screenshot_1681822715.png" width="350" height="550"/>    
